@@ -1,5 +1,9 @@
 name: Go
 on: [push]
+strategy:
+  matrix:
+    os: [macOS-10.14, ubuntu-18.04]
+    
 jobs:
 
   build:
