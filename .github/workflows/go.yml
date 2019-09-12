@@ -12,6 +12,10 @@ jobs:
       
     steps:
 
+    - name: pkg install
+      runs-on: ubuntu-18.04
+      run: apt-get install coreutils
+      
     - name: Set up Go 1.12
       uses: actions/setup-go@v1
       with:
