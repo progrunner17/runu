@@ -31,13 +31,6 @@ jobs:
     - name: Build
       run: go build -v .
       
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macOS-10.14, ubuntu-18.04]
-    steps:
     - name: Test (standalone)
       run: bash -ex ${GITHUB_WORKSPACE}/test/standalone-test.sh
     - name: Test (dockerd)
