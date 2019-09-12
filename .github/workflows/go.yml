@@ -1,15 +1,14 @@
 name: Go
-env:
-  TRAVIS_OS_NAME: "linux"
-  DOCKER_IMG_VERSION: "0.1"
-  PATH: ${GITHUB_WORKSPACE}:${PATH}
-
 on: [push]
     
 jobs:
 
   build:
     name: Build
+    env:
+      TRAVIS_OS_NAME: "linux"
+      DOCKER_IMG_VERSION: "0.1"
+      PATH: ${GITHUB_WORKSPACE}:${PATH}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
