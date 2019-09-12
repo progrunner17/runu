@@ -1,4 +1,9 @@
 name: Go
+env:
+  TRAVIS_OS_NAME: "linux"
+  DOCKER_IMG_VERSION: "0.1"
+  PATH: ${GITHUB_WORKSPACE}:${PATH}
+
 on: [push]
     
 jobs:
@@ -12,9 +17,6 @@ jobs:
 #        os: [macOS-10.14, ubuntu-18.04]
       
     steps:
-
-    - name: pkg install
-      run: sudo apt-get install coreutils
       
     - name: Set up Go 1.12
       uses: actions/setup-go@v1
@@ -37,9 +39,6 @@ jobs:
       run: go build -v .
       
     - name: Test (standalone)
-      env:
-        TRAVIS_OS_NAME: "linux"
-        DOCKER_IMG_VERSION: "0.1"
       run: bash -ex ${GITHUB_WORKSPACE}/test/standalone-test.sh
     - name: Test (dockerd)
       run: bash -ex ${GITHUB_WORKSPACE}/test/docker-oci-test.sh
