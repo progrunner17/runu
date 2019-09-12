@@ -39,10 +39,10 @@ jobs:
         os: [macOS-10.14, ubuntu-18.04]
     steps:
     - name: Test (standalone)
-      run: bash -ex test/standalone-test.sh
+      run: bash -ex ${GITHUB_WORKSPACE}/test/standalone-test.sh
     - name: Test (dockerd)
-      run: bash -ex test/docker-oci-test.sh
+      run: bash -ex ${GITHUB_WORKSPACE}/test/docker-oci-test.sh
     - name: Test (containerd/ctr)
-      run: bash -ex test/containerd-ctr-test.sh
+      run: bash -ex ${GITHUB_WORKSPACE}/test/containerd-ctr-test.sh
       
     
