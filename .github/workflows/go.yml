@@ -6,9 +6,6 @@ jobs:
   build:
     name: Build
     runs-on: ${{ matrix.os }}
-    env:
-      TRAVIS_OS_NAME: "osx"
-      DOCKER_IMG_VERSION: "0.1"
     strategy:
       matrix:
         os: [macOS-10.14, ubuntu-18.04]
@@ -36,6 +33,9 @@ jobs:
       run: go build -v .
       
     - name: Test (standalone)
+      env:
+        TRAVIS_OS_NAME: "osx"
+        DOCKER_IMG_VERSION: "0.1"
       run: bash -ex ${GITHUB_WORKSPACE}/test/standalone-test.sh
     - name: Test (dockerd)
       run: bash -ex ${GITHUB_WORKSPACE}/test/docker-oci-test.sh
