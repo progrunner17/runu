@@ -61,9 +61,17 @@ fold_start test.docker.2 "docker python"
     docker $DOCKER_RUN_ARGS -e HOME=/ \
            -e PYTHONHOME=/python -e LKL_ROOTFS=imgs/python.img \
            -e PYTHONHASHSEED=1 \
-           thehajime/runu-base:$DOCKER_IMG_VERSION \
+           thehajime/runu-python:$DOCKER_IMG_VERSION \
            python -c "print(\"hello world from python(docker-runu)\")"
 fold_end test.docker.2
+
+fold_start test.docker.2.2 "docker python-slim"
+    docker $DOCKER_RUN_ARGS -e HOME=/ \
+           -e PYTHONHOME=/python -e LKL_ROOTFS=imgs/python.img \
+           -e PYTHONHASHSEED=1 \
+           thehajime/runu-python-slim:$DOCKER_IMG_VERSION \
+           python -c "print(\"hello world from python(docker-runu)\")"
+fold_end test.docker.2.2
 
 # test nginx
 fold_start test.docker.3 "docker nginx"
@@ -76,6 +84,17 @@ CID=`docker $DOCKER_RUN_ARGS -d \
     docker logs $CID
     docker kill $CID
 fold_end test.docker.3
+
+fold_start test.docker.3.2 "docker nginx-slim"
+CID=`docker $DOCKER_RUN_ARGS -d \
+ -e LKL_ROOTFS=imgs/data.iso \
+ thehajime/runu-nginx-slim:$DOCKER_IMG_VERSION \
+ nginx`
+    sleep 2
+    docker ps -a
+    docker logs $CID
+    docker kill $CID
+fold_end test.docker.3.2
 
 
 # alipine image test
