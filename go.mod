@@ -13,7 +13,9 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/urfave/cli v1.22.1
-	golang.org/x/sys v0.0.0-20191118013547-6254a7c3cac6
+	github.com/vishvananda/netlink v1.1.0
+	github.com/vishvananda/netns v0.0.0-20200520041808-52d707b772fe
+	golang.org/x/sys v0.0.0-20200217220822-9197077df867
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.5 // indirect
 )
