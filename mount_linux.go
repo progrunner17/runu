@@ -10,7 +10,31 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func prepareMounts(spec *specs.Spec) error {
+func prepareMount(src, dest string) error {
+	srcStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if _, err := os.Stat(dest); err != nil {
+		if os.IsNotExist(err) {
+			if srcStat.IsDir() {
+				return os.MkdirAll(dest, 0755)
+			}
+			if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
+				return err
+			}
+			f, err := os.OpenFile(dest, os.O_CREATE, 0755)
+			if err != nil {
+				return err
+			}
+			f.Close()
+		}
+	}
+	return nil
+}
+
+func doMounts(spec *specs.Spec) error {
 
 	rootfs := spec.Root.Path
 	for _, m := range spec.Mounts {
@@ -51,16 +75,14 @@ func prepareMounts(spec *specs.Spec) error {
 				break
 			}
 
-			if err := os.MkdirAll(dest, os.ModeDir|0777); err != nil {
-				return fmt.Errorf("mkdir %s failed", dest)
+			if err := prepareMount(m.Source, dest); err != nil {
+				return err
 			}
 
 			if err := unix.Mount(m.Source, dest, "bind", flags, ""); err != nil {
 				return fmt.Errorf("mount %s on %s failed", m.Source, dest)
 			}
-
 		}
 	}
-
 	return nil
 }

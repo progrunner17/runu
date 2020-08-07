@@ -71,9 +71,9 @@ func createContainer(container, bundle, stateRoot string, spec *specs.Spec) erro
 		return err
 	}
 
-	err = prepareMounts(spec)
+	err = doMounts(spec)
 	if err != nil {
-		return fmt.Errorf("prepare mounts: %v", err)
+		return fmt.Errorf("do mounts: %s", err)
 	}
 
 	return nil
