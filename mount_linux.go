@@ -40,7 +40,7 @@ func doMounts(spec *specs.Spec) error {
 	for _, m := range spec.Mounts {
 		var (
 			dest          = m.Destination
-			flags uintptr = 0x0
+			flags uintptr = unix.MS_REC
 		)
 		if !strings.HasPrefix(dest, rootfs) {
 			dest = filepath.Join(rootfs, dest)
@@ -49,11 +49,10 @@ func doMounts(spec *specs.Spec) error {
 		for _, f := range m.Options {
 			switch f {
 			case "rbind":
-				flags = flags | unix.MS_BIND | unix.MS_REC
-			case "rprivate":
-				flags = flags | unix.MS_PRIVATE | unix.MS_REC
+				flags = flags | unix.MS_BIND
+			case "ro":
+				flags = flags | unix.MS_RDONLY
 			}
-
 		}
 
 		switch m.Type {
@@ -81,6 +80,14 @@ func doMounts(spec *specs.Spec) error {
 
 			if err := unix.Mount(m.Source, dest, "bind", flags, ""); err != nil {
 				return fmt.Errorf("mount %s on %s failed", m.Source, dest)
+			}
+			if err := unix.Mount("", dest, "bind", unix.MS_REC|unix.MS_PRIVATE, ""); err != nil {
+				return fmt.Errorf("mount private on %s failed", dest)
+			}
+			if flags&unix.MS_RDONLY != 0 {
+				if err := unix.Mount(m.Source, dest, "bind", flags|unix.MS_REMOUNT, ""); err != nil {
+					return fmt.Errorf("remount %s on %s failed", m.Source, dest)
+				}
 			}
 		}
 	}
