@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"net"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 
 	p9p "github.com/docker/go-p9p"
@@ -44,8 +46,17 @@ func connect9pfs() (*os.File, bool) {
 
 // 9pfs server side
 func start9pfsServer(path string) {
+
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		panic(err)
+	}
+	logrus.Debugf("Listening on %s\n", l.Addr())
+	logrus.Infof("Listening on %s\n", l.Addr())
+	go http.Serve(l, nil)
+
 	ctx := context.Background()
-	l, err := net.Listen("tcp", addr9p)
+	l, err = net.Listen("tcp", addr9p)
 	if err != nil {
 		panic(err)
 	}

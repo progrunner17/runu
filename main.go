@@ -2,13 +2,17 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"strings"
+
+	goruntime "runtime"
 
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	goruntime "runtime"
 )
 
 const (
@@ -21,6 +25,7 @@ const (
 )
 
 func main() {
+
 	app := cli.NewApp()
 	app.Name = "runu"
 	app.Usage = usage
@@ -99,7 +104,7 @@ func main() {
 			logrus.SetLevel(logrus.DebugLevel)
 			logrus.SetOutput(f)
 		}
-		if context.GlobalBool("debug") {
+		if context.GlobalBool("debug") || true {
 			logrus.SetLevel(logrus.DebugLevel)
 			logrus.SetOutput(os.Stdout)
 		}
@@ -116,10 +121,18 @@ func main() {
 				context.GlobalString("log-format"))
 		}
 
-		err := handleSystemLog("", "")
+		l, err := net.Listen("tcp", ":0")
 		if err != nil {
 			return err
 		}
+		logrus.Infof("Listening on %s\n", l.Addr())
+		go http.Serve(l, nil)
+
+		err = handleSystemLog("", "")
+		if err != nil {
+			return err
+		}
+		logrus.Debugf("Listening on %s\n", l.Addr())
 		logrus.Debugf("Runu called with args: %v", os.Args)
 		return nil
 	}
